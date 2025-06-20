@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/Vincent-IDAPP/tmg-backend.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/Vincent-IDAPP/tmg-frontend.git
