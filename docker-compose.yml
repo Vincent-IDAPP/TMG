@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: laravel.app
+    restart: always
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      APP_ENV: production
+      APP_DEBUG: 'false'
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+    depends_on:
+      - mysql
+    networks:
+      - tmg-network
+    ports:
+      - "9000:9000"  # si tu veux exposer PHP-FPM (optionnel)
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: tmg-frontend
+    restart: always
+    working_dir: /app
+    #volumes:
+    #  - ./frontend:/app
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3000:3000"   # Mapping port 3000 conteneur vers hôte
+    networks:
+      - tmg-network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/docker/nginx:/etc/nginx/conf.d   # adapte ce chemin selon où est ta conf nginx
+    depends_on:
+      - backend
+    networks:
+      - tmg-network
+
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - tmg-network
+
+
+volumes:
+  mysql-data:
+
+networks:
+  tmg-network:
+    driver: bridge
