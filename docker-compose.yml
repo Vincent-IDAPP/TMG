@@ -8,8 +8,6 @@ services:
     container_name: backend
     restart: always
     working_dir: /var/www/html
-    volumes:
-      - ./backend:/var/www/html
     environment:
       APP_ENV: production
       APP_DEBUG: 'false'
