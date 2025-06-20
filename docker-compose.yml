@@ -48,6 +48,7 @@ services:
     ports:
       - "80:80"
     volumes:
+      - ./backend/public:/var/www/html/public 
       - ./backend/docker/nginx:/etc/nginx/default.conf   # adapte ce chemin selon où est ta conf nginx
     depends_on:
       - backend
