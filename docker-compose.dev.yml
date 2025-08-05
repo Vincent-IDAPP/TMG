@@ -2,13 +2,15 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: backend
     restart: always
+    volumes:
+      - ./backend:/var/www/html
     working_dir: /var/www/html
     environment:
-      APP_ENV: production
-      APP_DEBUG: 'false'
+      APP_ENV: local
+      APP_DEBUG: 'true'
       DB_HOST: mysql
       DB_PORT: 3306
       DB_DATABASE: laravel
@@ -24,14 +26,15 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: tmg-frontend
     restart: always
     working_dir: /app
-    #volumes:
-    #  - ./frontend:/app
-    env_file:
-      - .env
+    volumes:
+    - ./frontend:/app
+    - /app/node_modules
+    environment:
+      NODE_ENV: development
     ports:
       - "3000:3000"   # Mapping port 3000 conteneur vers hôte
     networks:
@@ -44,7 +47,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./backend/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf   # adapte ce chemin selon où est ta conf nginx
+      - ./backend:/var/www/html
+      - ./backend/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
     networks:
