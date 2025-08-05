@@ -31,7 +31,7 @@ services:
     #volumes:
     #  - ./frontend:/app
     env_file:
-      - .env
+      - ./frontend/.env
     ports:
       - "3000:3000"   # Mapping port 3000 conteneur vers hôte
     networks:
